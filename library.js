@@ -107,10 +107,11 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
-    function renderCategories() {
-        if (!categoryGrid) return;
+    
+    function renderCategories(container = categoryGrid) {
+        if (!container) return;
 
-        categoryGrid.replaceChildren();
+        container.replaceChildren();
 
         data.categories.forEach(category => {
             const card = makeElement("article", "category-card");
@@ -133,9 +134,10 @@ document.addEventListener("DOMContentLoaded", () => {
             });
 
             card.appendChild(button);
-            categoryGrid.appendChild(card);
+            container.appendChild(card);
         });
     }
+   
 
     function toggleFavorite(id) {
         favorites = favorites.includes(id)
@@ -274,10 +276,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
         const page = link.dataset.page || link.getAttribute("href").slice(1);
 
-        const pages = {
             categories: () => {
                 openDynamicPage("Categories", "Explore all resource categories.");
-                renderCategories();
+                renderCategories(dynamicContent);
+            },
+               
                 dynamicContent.appendChild(categoryGrid.cloneNode(true));
             },
             scripts: showAllScripts,
