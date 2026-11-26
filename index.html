@@ -1,1 +1,344 @@
 
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#0b0b0d">
+
+    <title>JACKUX HUB | Roblox Resources</title>
+
+    <meta name="description"
+          content="JACKUX HUB - Roblox Studio scripts and educational Luau resources.">
+
+    <link rel="stylesheet" href="style.css">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+          rel="stylesheet">
+
+    <script src="app.js" defer></script>
+</head>
+
+<body>
+
+    <!-- Mobile Overlay -->
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+
+        <div class="brand">
+            <div class="brand-icon">J</div>
+            <div class="brand-text">
+                <h2>JACKUX <span>HUB</span></h2>
+                <small>ROBLOX RESOURCES</small>
+            </div>
+            <button class="close-sidebar" id="closeSidebar"
+                    aria-label="Close navigation">×</button>
+        </div>
+
+        <div class="sidebar-content">
+
+            <p class="nav-heading">MENU</p>
+
+            <nav class="navigation">
+                <a href="#home" class="nav-link active" data-page="home">
+                    <span>⌂</span> Home
+                </a>
+
+                <a href="#categories" class="nav-link" data-page="categories">
+                    <span>▦</span> Categories
+                </a>
+
+                <a href="#scripts" class="nav-link" data-page="scripts">
+                    <span>⌘</span> All Scripts
+                </a>
+
+                <a href="#favorites" class="nav-link" data-page="favorites">
+                    <span>♡</span> Favorites
+                </a>
+
+                <a href="#recent" class="nav-link" data-page="recent">
+                    <span>◷</span> Recently Viewed
+                </a>
+            </nav>
+
+            <p class="nav-heading">DISCOVER</p>
+
+            <nav class="navigation">
+                <a href="#trending" class="nav-link" data-page="trending">
+                    <span>↗</span> Trending
+                </a>
+
+                <a href="#latest" class="nav-link" data-page="latest">
+                    <span>✦</span> Latest Scripts
+                </a>
+            </nav>
+
+            <p class="nav-heading">WEBSITE</p>
+
+            <nav class="navigation">
+                <a href="#about" class="nav-link" data-page="about">
+                    <span>ⓘ</span> About Us
+                </a>
+
+                <a href="#privacy" class="nav-link" data-page="privacy">
+                    <span>♧</span> Privacy
+                </a>
+
+                <a href="#admin" class="nav-link" data-page="admin">
+                    <span>⚙</span> Admin Editor
+                </a>
+            </nav>
+
+        </div>
+
+        <div class="sidebar-footer">
+            <div class="status-dot"></div>
+            <span>JACKUX HUB v1.0</span>
+        </div>
+
+    </aside>
+
+
+    <!-- Main Area -->
+    <main class="main-content" id="home">
+
+        <!-- Topbar -->
+        <header class="topbar">
+
+            <button class="menu-button" id="menuButton"
+                    aria-label="Open navigation">☰</button>
+
+            <div class="breadcrumb">
+                <span>JACKUX HUB</span>
+                <span class="breadcrumb-divider">/</span>
+                <strong id="currentPage">Home</strong>
+            </div>
+
+            <div class="topbar-actions">
+                <button class="icon-button" id="themeButton"
+                        aria-label="Toggle theme">◐</button>
+
+                <button class="user-button" id="userButton">
+                    <span class="user-avatar">J</span>
+                    <span class="user-label">Guest</span>
+                </button>
+            </div>
+
+        </header>
+
+
+        <!-- Page Content -->
+        <div class="page-container">
+
+            <!-- Home Page -->
+            <section class="page-section" id="homePage">
+
+                <div class="hero">
+
+                    <div class="hero-content">
+                        <div class="hero-label">
+                            <span class="live-dot"></span>
+                            ROBLOX DEVELOPMENT RESOURCE HUB
+                        </div>
+
+                        <h1>
+                            LEVEL UP YOUR
+                            <span>ROBLOX EXPERIENCE.</span>
+                        </h1>
+
+                        <p>
+                            Discover Roblox Studio scripts, explore
+                            Luau resources, and learn something new.
+                            Everything in one place.
+                        </p>
+
+                        <div class="hero-buttons">
+                            <a href="#scripts" class="button button-primary">
+                                Explore Scripts →
+                            </a>
+
+                            <a href="#categories" class="button button-secondary">
+                                Browse Categories
+                            </a>
+                        </div>
+                    </div>
+
+                    <div class="hero-decoration">
+                        <div class="hero-logo">J</div>
+                        <div class="hero-circle circle-one"></div>
+                        <div class="hero-circle circle-two"></div>
+                    </div>
+
+                </div>
+
+
+                <!-- Search -->
+                <section class="search-section">
+
+                    <div>
+                        <h2>Find Your Next Script</h2>
+                        <p>Search scripts and educational resources.</p>
+                    </div>
+
+                    <div class="search-box">
+                        <span>⌕</span>
+                        <input
+                            type="search"
+                            id="searchInput"
+                            placeholder="Search scripts, games, categories..."
+                        >
+                        <button id="searchButton">Search</button>
+                    </div>
+
+                </section>
+
+
+                <!-- Statistics -->
+                <section class="stats-grid">
+
+                    <div class="stat-card">
+                        <div class="stat-icon">⌘</div>
+                        <div>
+                            <h3 id="scriptCount">0</h3>
+                            <p>Total Scripts</p>
+                        </div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-icon">▦</div>
+                        <div>
+                            <h3 id="categoryCount">0</h3>
+                            <p>Categories</p>
+                        </div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-icon">♡</div>
+                        <div>
+                            <h3 id="favoriteCount">0</h3>
+                            <p>Your Favorites</p>
+                        </div>
+                    </div>
+
+                </section>
+
+
+                <!-- Categories -->
+                <section class="content-section" id="categoriesSection">
+
+                    <div class="section-heading">
+                        <div>
+                            <h2>Browse Categories</h2>
+                            <p>Explore resources by category.</p>
+                        </div>
+
+                        <a href="#categories" class="text-link">
+                            View All →
+                        </a>
+                    </div>
+
+                    <div class="category-grid" id="categoryGrid">
+
+                        <!-- Categories will be loaded here -->
+
+                    </div>
+
+                </section>
+
+
+                <!-- Featured Scripts -->
+                <section class="content-section">
+
+                    <div class="section-heading">
+                        <div>
+                            <h2>Featured Scripts</h2>
+                            <p>Handpicked resources from JACKUX HUB.</p>
+                        </div>
+
+                        <a href="#scripts" class="text-link">
+                            View All →
+                        </a>
+                    </div>
+
+                    <div class="script-grid" id="featuredScripts">
+
+                        <!-- Featured scripts will be loaded here -->
+
+                    </div>
+
+                </section>
+
+
+                <!-- Latest Scripts -->
+                <section class="content-section">
+
+                    <div class="section-heading">
+                        <div>
+                            <h2>Recently Added</h2>
+                            <p>Explore the latest resources.</p>
+                        </div>
+
+                        <a href="#latest" class="text-link">
+                            View All →
+                        </a>
+                    </div>
+
+                    <div class="script-grid" id="latestScripts">
+
+                        <!-- Latest scripts will be loaded here -->
+
+                    </div>
+
+                </section>
+
+            </section>
+
+
+            <!-- Dynamic Pages -->
+            <section id="dynamicPage" class="page-section hidden">
+
+                <div class="dynamic-heading">
+                    <div>
+                        <span class="hero-label">JACKUX HUB</span>
+                        <h1 id="dynamicTitle">Page Title</h1>
+                        <p id="dynamicDescription">Page description</p>
+                    </div>
+                </div>
+
+                <div id="dynamicContent"></div>
+
+            </section>
+
+        </div>
+
+
+        <!-- Footer -->
+        <footer class="footer">
+
+            <div class="footer-brand">
+                <div class="brand-icon">J</div>
+                <div>
+                    <h3>JACKUX HUB</h3>
+                    <p>Built for Roblox developers.</p>
+                </div>
+            </div>
+
+            <p>© 2026 JACKUX HUB. All rights reserved.</p>
+
+            <div class="footer-links">
+                <a href="#about">About</a>
+                <a href="#privacy">Privacy</a>
+            </div>
+
+        </footer>
+
+    </main>
+
+</body>
+      </html>
+  
