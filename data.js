@@ -1,33 +1,96 @@
 
 window.JACKUX_DATA = {
+  gameFolders: [
+    {
+      id: "roblox-studio",
+      name: "Roblox Studio",
+      description: "Learning resources and scripts for creating your own Roblox experiences.",
+      icon: "🧱"
+    },
+    {
+      id: "blox-fruits",
+      name: "Blox Fruits",
+      description: "Browse Blox Fruits script collections by category.",
+      icon: "🍎"
+    },
+    {
+      id: "steal-a-egg",
+      name: "Steal a Egg",
+      description: "Resources and script collections for Steal a Egg.",
+      icon: "🥚"
+    },
+    {
+      id: "other-games",
+      name: "Other Games",
+      description: "Collections for other Roblox experiences.",
+      icon: "🎮"
+    }
+  ],
+
   categories: [
     {
       id: "beginner",
       name: "Beginner Scripts",
       description: "Simple scripts for learning Roblox Studio and Luau.",
-      icon: "🌱"
+      icon: "🌱",
+      gameId: "roblox-studio"
     },
     {
       id: "ui",
       name: "UI Scripts",
       description: "User interfaces, buttons and GUI examples.",
-      icon: "🎨"
+      icon: "🎨",
+      gameId: "roblox-studio"
     },
     {
       id: "gameplay",
       name: "Gameplay Scripts",
       description: "Gameplay mechanics for your own Roblox games.",
-      icon: "🎮"
+      icon: "🎮",
+      gameId: "roblox-studio"
     },
     {
       id: "utilities",
       name: "Utility Scripts",
       description: "Useful tools and helper scripts.",
-      icon: "🛠️"
+      icon: "🛠️",
+      gameId: "roblox-studio"
+    }
+    {
+      id: "all-hub",
+      name: "All Hub",
+      description: "General Blox Fruits hub collections.",
+      icon: "📦",
+      gameId: "blox-fruits"
+    },
+    {
+      id: "pvp",
+      name: "PvP",
+      description: "Blox Fruits player-versus-player collections.",
+      icon: "⚔️",
+      gameId: "blox-fruits"
     }
   ],
 
   scripts: [
+    {
+      id: "quantum-onyx",
+      name: "Quantum Onyx",
+      category: "all-hub",
+      description: "Blox Fruits hub entry. Script content has not been added yet.",
+      type: "Hub",
+      location: "Blox Fruits / All Hub",
+      code: ""
+    },
+    {
+      id: "centudox-v4",
+      name: "Centudox V4",
+      category: "pvp",
+      description: "Blox Fruits PvP entry. Script content has not been added yet.",
+      type: "Hub",
+      location: "Blox Fruits / PvP",
+      code: ""
+    },
     {
       id: "leaderstats",
       name: "Basic Leaderstats",
