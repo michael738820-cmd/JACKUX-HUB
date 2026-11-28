@@ -55,7 +55,7 @@ window.JACKUX_DATA = {
       description: "Useful tools and helper scripts.",
       icon: "🛠️",
       gameId: "roblox-studio"
-    }
+    },
     {
       id: "all-hub",
       name: "All Hub",
