@@ -268,7 +268,7 @@ document.addEventListener("DOMContentLoaded", () => {
     renderCards(featuredScripts, data.scripts.slice(0, 3));
     renderCards(latestScripts, [...data.scripts].reverse().slice(0, 3));
     updateCounts();
-
+    
     // Intercept navigation before the existing Part 1 handlers.
     document.addEventListener("click", event => {
         const link = event.target.closest("a[href^='#']");
@@ -276,12 +276,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
         const page = link.dataset.page || link.getAttribute("href").slice(1);
 
+        const pages = {
             categories: () => {
                 openDynamicPage("Categories", "Explore all resource categories.");
                 renderCategories(dynamicContent);
-            },
-               
-                dynamicContent.appendChild(categoryGrid.cloneNode(true));
             },
             scripts: showAllScripts,
             favorites: showFavorites,
@@ -299,6 +297,7 @@ document.addEventListener("DOMContentLoaded", () => {
             pages[page]();
         }
     }, true);
+
 
     // Search
     const searchButton = document.getElementById("searchButton");
