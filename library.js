@@ -1,16 +1,18 @@
-
 /* =========================================
-   JACKUX HUB - SCRIPT LIBRARY
-   Part 2: Categories and Script Browsing
+   JACKUX HUB - NESTED SCRIPT LIBRARY
+   Game folders > Categories > Scripts
 ========================================= */
 
 document.addEventListener("DOMContentLoaded", () => {
     const data = window.JACKUX_DATA;
-
     if (!data) {
         console.error("JACKUX_DATA was not found. Check data.js.");
         return;
     }
+
+    data.gameFolders = data.gameFolders || [];
+    data.categories = data.categories || [];
+    data.scripts = data.scripts || [];
 
     const categoryGrid = document.getElementById("categoryGrid");
     const featuredScripts = document.getElementById("featuredScripts");
@@ -19,278 +21,250 @@ document.addEventListener("DOMContentLoaded", () => {
     const dynamicTitle = document.getElementById("dynamicTitle");
     const dynamicDescription = document.getElementById("dynamicDescription");
 
-    const getSaved = (key) => {
-        try {
-            return JSON.parse(localStorage.getItem(key)) || [];
-        } catch {
-            return [];
-        }
+    const getSaved = key => {
+        try { return JSON.parse(localStorage.getItem(key)) || []; }
+        catch { return []; }
     };
-
-    const save = (key, value) => {
-        localStorage.setItem(key, JSON.stringify(value));
-    };
+    const save = (key, value) => localStorage.setItem(key, JSON.stringify(value));
 
     let favorites = getSaved("jackux-favorites");
     let recent = getSaved("jackux-recent");
 
-    function makeElement(tag, className, text) {
-        const element = document.createElement(tag);
-        if (className) element.className = className;
-        if (text !== undefined) element.textContent = text;
-        return element;
+    const makeElement = (tag, className, text) => {
+        const el = document.createElement(tag);
+        if (className) el.className = className;
+        if (text !== undefined) el.textContent = text;
+        return el;
+    };
+
+    const getFolder = id => data.gameFolders.find(item => item.id === id);
+    const getCategory = id => data.categories.find(item => item.id === id);
+    const getScripts = categoryId => data.scripts.filter(item => item.category === categoryId);
+
+    function openPage(title, description) {
+        document.getElementById("homePage")?.classList.add("hidden");
+        document.getElementById("dynamicPage")?.classList.remove("hidden");
+        if (dynamicTitle) dynamicTitle.textContent = title;
+        if (dynamicDescription) dynamicDescription.textContent = description || "";
+        dynamicContent?.replaceChildren();
+        const current = document.getElementById("currentPage");
+        if (current) current.textContent = title;
+        dynamicContent?.classList.remove("content-enter");
+        void dynamicContent?.offsetWidth;
+        dynamicContent?.classList.add("content-enter");
     }
 
-    function getCategory(id) {
-        return data.categories.find(category => category.id === id);
+    function addBackButton(label, callback) {
+        const button = makeElement("button", "library-back-button", "← " + label);
+        button.type = "button";
+        button.addEventListener("click", callback);
+        dynamicContent.appendChild(button);
     }
 
-    function createScriptCard(script) {
-        const card = makeElement("article", "script-card");
-
-        const category = getCategory(script.category);
-        const heading = makeElement("h3", "", script.name);
-        const description = makeElement("p", "", script.description);
-        const type = makeElement(
-            "span",
-            "script-type",
-            script.type || "Script"
-        );
-
-        const actions = makeElement("div", "script-card-actions");
-
-        const viewButton = makeElement("button", "", "View Script");
-        viewButton.type = "button";
-        viewButton.addEventListener("click", () => {
-            showScript(script.id);
-        });
-
-        const favoriteButton = makeElement(
-            "button",
-            "favorite-button",
-            favorites.includes(script.id) ? "♥ Saved" : "♡ Save"
-        );
-
-        favoriteButton.type = "button";
-        favoriteButton.addEventListener("click", () => {
-            toggleFavorite(script.id);
-            favoriteButton.textContent = favorites.includes(script.id)
-                ? "♥ Saved"
-                : "♡ Save";
-            updateCounts();
-        });
-
-        actions.append(viewButton, favoriteButton);
-
-        if (category) {
-            card.append(makeElement("small", "", category.name));
-        }
-
-        card.append(heading, description, type, actions);
-        return card;
+    function updateCounts() {
+        const scripts = document.getElementById("scriptCount");
+        const categories = document.getElementById("categoryCount");
+        const saved = document.getElementById("favoriteCount");
+        if (scripts) scripts.textContent = data.scripts.length;
+        if (categories) categories.textContent = data.categories.length;
+        if (saved) saved.textContent = favorites.length;
     }
-
-    function renderCards(container, scripts) {
-        if (!container) return;
-
-        container.replaceChildren();
-
-        if (!scripts.length) {
-            container.append(
-                makeElement("p", "empty-message", "No scripts found here yet.")
-            );
-            return;
-        }
-
-        scripts.forEach(script => {
-            container.appendChild(createScriptCard(script));
-        });
-    }
-
-    
-    function renderCategories(container = categoryGrid) {
-        if (!container) return;
-
-        container.replaceChildren();
-
-        data.categories.forEach(category => {
-            const card = makeElement("article", "category-card");
-
-            card.append(
-                makeElement("div", "category-icon", category.icon || "📁"),
-                makeElement("h3", "", category.name),
-                makeElement("p", "", category.description),
-                makeElement(
-                    "small",
-                    "",
-                    `${data.scripts.filter(s => s.category === category.id).length} scripts`
-                )
-            );
-
-            const button = makeElement("button", "", "Explore Category");
-            button.type = "button";
-            button.addEventListener("click", () => {
-                showCategory(category.id);
-            });
-
-            card.appendChild(button);
-            container.appendChild(card);
-        });
-    }
-   
 
     function toggleFavorite(id) {
         favorites = favorites.includes(id)
             ? favorites.filter(item => item !== id)
             : [...favorites, id];
-
         save("jackux-favorites", favorites);
     }
 
-    function updateCounts() {
-        const scriptCount = document.getElementById("scriptCount");
-        const categoryCount = document.getElementById("categoryCount");
-        const favoriteCount = document.getElementById("favoriteCount");
-
-        if (scriptCount) scriptCount.textContent = data.scripts.length;
-        if (categoryCount) categoryCount.textContent = data.categories.length;
-        if (favoriteCount) favoriteCount.textContent = favorites.length;
+    function createFolderCard(folder) {
+        const card = makeElement("article", "category-card folder-card");
+        const count = data.categories.filter(c => c.gameId === folder.id).length;
+        card.append(
+            makeElement("div", "category-icon", folder.icon || "📁"),
+            makeElement("h3", "", folder.name),
+            makeElement("p", "", folder.description || "Browse this game folder."),
+            makeElement("small", "folder-count", count + " categories")
+        );
+        const button = makeElement("button", "folder-open-button", "Open Folder →");
+        button.type = "button";
+        button.addEventListener("click", () => showFolder(folder.id));
+        card.appendChild(button);
+        return card;
     }
 
-    function openDynamicPage(title, description) {
-        document.getElementById("homePage")?.classList.add("hidden");
-        document.getElementById("dynamicPage")?.classList.remove("hidden");
+    function createCategoryCard(category) {
+        const card = makeElement("article", "category-card nested-category-card");
+        card.append(
+            makeElement("div", "category-icon", category.icon || "📁"),
+            makeElement("h3", "", category.name),
+            makeElement("p", "", category.description || "Browse scripts in this category."),
+            makeElement("small", "folder-count", getScripts(category.id).length + " scripts")
+        );
+        const button = makeElement("button", "folder-open-button", "Open Category →");
+        button.type = "button";
+        button.addEventListener("click", () => showCategory(category.id));
+        card.appendChild(button);
+        return card;
+    }
 
-        if (dynamicTitle) dynamicTitle.textContent = title;
-        if (dynamicDescription) dynamicDescription.textContent = description;
+    function createScriptCard(script) {
+        const card = makeElement("article", "script-card animated-card");
+        const category = getCategory(script.category);
+        const folder = category && getFolder(category.gameId);
+        card.append(
+            makeElement("small", "script-category", (folder ? folder.name + " / " : "") + (category ? category.name : "Unsorted")),
+            makeElement("h3", "", script.name),
+            makeElement("p", "", script.description || "No description provided."),
+            makeElement("span", "script-type", script.type || "Script")
+        );
 
-        if (dynamicContent) dynamicContent.replaceChildren();
+        const actions = makeElement("div", "script-card-actions");
+        const view = makeElement("button", "library-action-primary", "View Details");
+        view.type = "button";
+        view.addEventListener("click", () => showScript(script.id));
 
-        const currentPage = document.getElementById("currentPage");
-        if (currentPage) currentPage.textContent = title;
+        const favorite = makeElement("button", "favorite-button", favorites.includes(script.id) ? "♥ Saved" : "♡ Save");
+        favorite.type = "button";
+        favorite.addEventListener("click", () => {
+            toggleFavorite(script.id);
+            favorite.textContent = favorites.includes(script.id) ? "♥ Saved" : "♡ Save";
+            updateCounts();
+        });
+        actions.append(view, favorite);
+        card.appendChild(actions);
+        return card;
+    }
+
+    function renderList(container, items, createCard, emptyText) {
+        if (!container) return;
+        container.replaceChildren();
+        if (!items.length) {
+            container.appendChild(makeElement("p", "empty-message", emptyText));
+            return;
+        }
+        items.forEach((item, index) => {
+            const card = createCard(item);
+            card.style.setProperty("--card-index", index);
+            container.appendChild(card);
+        });
+    }
+
+    function showFolders() {
+        openPage("Game Folders", "Choose a Roblox game to explore its categories.");
+        renderList(dynamicContent, data.gameFolders, createFolderCard, "No game folders yet.");
+        history.replaceState(null, "", "#categories");
+    }
+
+    function showFolder(id) {
+        const folder = getFolder(id);
+        if (!folder) return;
+        openPage(folder.name, folder.description);
+        addBackButton("All Game Folders", showFolders);
+        const categories = data.categories.filter(item => item.gameId === id);
+        renderList(dynamicContent, categories, createCategoryCard, "No categories in this folder yet.");
+        history.replaceState(null, "", "#game-" + id);
     }
 
     function showCategory(id) {
         const category = getCategory(id);
         if (!category) return;
-
-        const scripts = data.scripts.filter(s => s.category === id);
-
-        openDynamicPage(category.name, category.description);
-        renderCards(dynamicContent, scripts);
-        history.replaceState(null, "", "#categories");
+        const folder = getFolder(category.gameId);
+        openPage(category.name, category.description);
+        addBackButton(folder ? "Back to " + folder.name : "Game Folders", () => folder ? showFolder(folder.id) : showFolders());
+        renderList(dynamicContent, getScripts(id), createScriptCard, "No scripts in this category yet.");
+        history.replaceState(null, "", "#category-" + id);
     }
 
     function showScript(id) {
         const script = data.scripts.find(item => item.id === id);
         if (!script) return;
-
         recent = [id, ...recent.filter(item => item !== id)].slice(0, 20);
         save("jackux-recent", recent);
 
-        openDynamicPage(script.name, script.description);
-
         const category = getCategory(script.category);
-        const details = makeElement("div", "script-card");
+        const folder = category && getFolder(category.gameId);
+        openPage(script.name, script.description);
+        addBackButton("Back to " + (category ? category.name : "Scripts"), () => category ? showCategory(category.id) : showAllScripts());
 
+        const details = makeElement("article", "script-card script-detail-card");
         details.append(
             makeElement("h2", "", script.name),
-            makeElement("p", "", script.description),
-            makeElement("p", "", `Type: ${script.type || "Script"}`),
-            makeElement("p", "", `Location: ${script.location || "Not specified"}`)
+            makeElement("p", "", script.description || ""),
+            makeElement("p", "script-location", "Path: " + (folder ? folder.name + " / " : "") + (category ? category.name : "Unsorted")),
+            makeElement("p", "script-location", "Type: " + (script.type || "Script")),
+            makeElement("p", "script-location", "Location: " + (script.location || "Not specified"))
         );
 
         const code = makeElement("pre", "code-viewer");
-        const codeText = makeElement("code", "", script.code || "");
-        code.appendChild(codeText);
-
-        const copyButton = makeElement("button", "", "Copy Code");
-        copyButton.type = "button";
-        copyButton.addEventListener("click", async () => {
+        code.appendChild(makeElement("code", "", script.code || "Script content has not been added yet."));
+        const copy = makeElement("button", "library-action-primary", "Copy Code");
+        copy.type = "button";
+        copy.disabled = !script.code;
+        if (!script.code) copy.title = "Code has not been added yet.";
+        copy.addEventListener("click", async () => {
             try {
-                await navigator.clipboard.writeText(script.code || "");
-                copyButton.textContent = "Copied!";
+                await navigator.clipboard.writeText(script.code);
+                copy.textContent = "Copied!";
             } catch {
-                copyButton.textContent = "Copy unavailable";
+                copy.textContent = "Copy unavailable";
             }
         });
-
-        const backButton = makeElement("button", "", "Back to Scripts");
-        backButton.type = "button";
-        backButton.addEventListener("click", showAllScripts);
-
-        details.append(code, copyButton, backButton);
+        details.append(code, copy);
         dynamicContent.appendChild(details);
-
-        history.replaceState(null, "", `#script-${script.id}`);
     }
 
     function showAllScripts() {
-        openDynamicPage("All Scripts", "Browse the complete script library.");
-        renderCards(dynamicContent, data.scripts);
+        openPage("All Scripts", "Browse every script in JACKUX HUB.");
+        renderList(dynamicContent, data.scripts, createScriptCard, "No scripts found.");
         history.replaceState(null, "", "#scripts");
     }
 
     function showFavorites() {
-        const scripts = data.scripts.filter(s => favorites.includes(s.id));
-        openDynamicPage("My Favorites", "Scripts saved on this device.");
-        renderCards(dynamicContent, scripts);
+        openPage("My Favorites", "Scripts saved on this device.");
+        renderList(dynamicContent, data.scripts.filter(s => favorites.includes(s.id)), createScriptCard, "You have not saved any scripts yet.");
     }
 
     function showRecent() {
-        const scripts = recent
-            .map(id => data.scripts.find(s => s.id === id))
-            .filter(Boolean);
-
-        openDynamicPage("Recently Viewed", "Your recently opened scripts.");
-        renderCards(dynamicContent, scripts);
+        const items = recent.map(id => data.scripts.find(s => s.id === id)).filter(Boolean);
+        openPage("Recently Viewed", "Your recently opened scripts.");
+        renderList(dynamicContent, items, createScriptCard, "You have not viewed any scripts yet.");
     }
 
     function showSearchResults(query) {
         const term = query.toLowerCase();
-
         const results = data.scripts.filter(script => {
             const category = getCategory(script.category);
-
-            return (
-                script.name.toLowerCase().includes(term) ||
-                script.description.toLowerCase().includes(term) ||
-                (category && category.name.toLowerCase().includes(term))
-            );
+            const folder = category && getFolder(category.gameId);
+            return [script.name, script.description, category?.name, folder?.name]
+                .some(value => (value || "").toLowerCase().includes(term));
         });
-
-        openDynamicPage("Search Results", `Results for: ${query}`);
-        renderCards(dynamicContent, results);
+        openPage("Search Results", 'Results for: "' + query + '"');
+        renderList(dynamicContent, results, createScriptCard, "No matching scripts found.");
     }
 
-    // Home page content
-    renderCategories();
-    renderCards(featuredScripts, data.scripts.slice(0, 3));
-    renderCards(latestScripts, [...data.scripts].reverse().slice(0, 3));
+    // Home now displays top-level game folders.
+    renderList(categoryGrid, data.gameFolders, createFolderCard, "No game folders yet.");
+    renderList(featuredScripts, data.scripts.slice(0, 3), createScriptCard, "No featured scripts yet.");
+    renderList(latestScripts, [...data.scripts].reverse().slice(0, 3), createScriptCard, "No scripts yet.");
     updateCounts();
-    
-    // Intercept navigation before the existing Part 1 handlers.
+
+    // Route navigation links through the nested library.
     document.addEventListener("click", event => {
         const link = event.target.closest("a[href^='#']");
         if (!link) return;
-
         const page = link.dataset.page || link.getAttribute("href").slice(1);
-
         const pages = {
-            categories: () => {
-                openDynamicPage("Categories", "Explore all resource categories.");
-                renderCategories(dynamicContent);
-            },
+            categories: showFolders,
             scripts: showAllScripts,
             favorites: showFavorites,
             recent: showRecent,
             trending: showAllScripts,
             latest: () => {
-                openDynamicPage("Latest Scripts", "Recently added resources.");
-                renderCards(dynamicContent, [...data.scripts].reverse());
+                openPage("Latest Scripts", "Recently added resources.");
+                renderList(dynamicContent, [...data.scripts].reverse(), createScriptCard, "No scripts yet.");
             }
         };
-
         if (pages[page]) {
             event.preventDefault();
             event.stopImmediatePropagation();
@@ -298,26 +272,19 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }, true);
 
-
-    // Search
     const searchButton = document.getElementById("searchButton");
     const searchInput = document.getElementById("searchInput");
-
     function runSearch(event) {
         const query = searchInput?.value.trim();
         if (!query) return;
-
         event?.preventDefault();
         event?.stopImmediatePropagation();
         showSearchResults(query);
     }
-
     searchButton?.addEventListener("click", runSearch, true);
-
     searchInput?.addEventListener("keydown", event => {
         if (event.key === "Enter") runSearch(event);
     }, true);
 
-    console.log("JACKUX HUB script library loaded.");
+    console.log("JACKUX HUB nested library loaded.");
 });
-      
